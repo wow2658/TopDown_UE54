@@ -9,6 +9,7 @@
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+class IGASEnemyInterface;
 /**
  * 
  */
@@ -19,7 +20,7 @@ class TOPDOWN_UE54_API AGASPlayerController : public APlayerController
 
 public:
 	AGASPlayerController();
-
+	virtual void PlayerTick(float DeltaTime) override;
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
@@ -32,4 +33,8 @@ private:
 	TObjectPtr<UInputAction> MoveAction;
 
 	void Move(const FInputActionValue& InputActionValue);
+
+	void CursorTrace();
+	TScriptInterface<IGASEnemyInterface> LastActor;
+	TScriptInterface<IGASEnemyInterface> ThisActor;
 };
