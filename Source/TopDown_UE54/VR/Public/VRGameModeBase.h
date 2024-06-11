@@ -32,4 +32,6 @@ protected:
 	TSubclassOf<APawn> GASCharacterClass = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<APlayerController> GASPlayerControllerClass = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<APlayerState> GASPlayerStateClass = nullptr;
 };

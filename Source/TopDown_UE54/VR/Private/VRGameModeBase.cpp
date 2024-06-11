@@ -3,6 +3,7 @@
 
 #include "VRGameModeBase.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
+#include "GameFramework/PlayerState.h"
 
 AVRGameModeBase::AVRGameModeBase()
 {
@@ -34,6 +35,13 @@ AVRGameModeBase::AVRGameModeBase()
 		check(Asset.Class);
 		GASPlayerControllerClass = Asset.Class;
 	}
+
+	{
+		ConstructorHelpers::FClassFinder<APlayerState> Asset(
+			TEXT("/Script/Engine.Blueprint'/Game/Player/BP_GASPlayerState.BP_GASPlayerState_C'"));
+		check(Asset.Class);
+		GASPlayerStateClass = Asset.Class;
+	}
 }
 
 APlayerController* AVRGameModeBase::Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
@@ -48,6 +56,7 @@ APlayerController* AVRGameModeBase::Login(UPlayer* NewPlayer, ENetRole InRemoteR
 	{
 		DefaultPawnClass = GASCharacterClass;
 		PlayerControllerClass = GASPlayerControllerClass;
+		PlayerStateClass = GASPlayerStateClass;
 	}
 	return Super::Login(NewPlayer, InRemoteRole, Portal, Options, UniqueId, ErrorMessage);
 }

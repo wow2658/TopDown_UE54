@@ -13,7 +13,7 @@ public class TopDown_UE54 : ModuleRules
             "AIModule", "Niagara", "XRBase", "UMG"
         });
 
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
+		PrivateDependencyModuleNames.AddRange(new string[] { "GameplayAbilities", "GameplayTags", "GameplayTasks" });
 
         PrivateIncludePaths.Add("TopDown_UE54");
         PrivateIncludePaths.Add("TopDown_UE54/GAS");
