@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 #include "GASCharacterBase.generated.h"
 
-UCLASS()
+UCLASS(Abstract)
 class TOPDOWN_UE54_API AGASCharacterBase : public ACharacter
 {
 	GENERATED_BODY()

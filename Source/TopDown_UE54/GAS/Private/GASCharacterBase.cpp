@@ -3,6 +3,7 @@
 
 #include "GASCharacterBase.h"
 #include "Components/CapsuleComponent.h"
+
 AGASCharacterBase::AGASCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
