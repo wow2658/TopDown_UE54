@@ -11,6 +11,11 @@
 #include "VRHandSkeletalMeshComponent.h"
 #include "Components/WidgetComponent.h"
 
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+
+
 AVRPawn::AVRPawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -100,6 +105,21 @@ void AVRPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	{
+		UEnhancedInputLocalPlayerSubsystem* Subsystem =
+			ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer());
+
+		const UBasicInputDataConfig* BasicInputDataConfig = GetDefault<UBasicInputDataConfig>();
+		Subsystem->AddMappingContext(BasicInputDataConfig->InputMappingContext, 0);
+
+		const UVRHandsInputDataConfig* VRHandsInputDataConfig = GetDefault<UVRHandsInputDataConfig>();
+		Subsystem->AddMappingContext(VRHandsInputDataConfig->InputMappingContext, 0);
+
+		const UVRHandsAnimationInputDataConfig* VRHandsAnimationInputDataConfig = GetDefault<UVRHandsAnimationInputDataConfig>();
+		Subsystem->AddMappingContext(VRHandsAnimationInputDataConfig->InputMappingContext, 1);
+	}
+
 }
 
 void AVRPawn::Tick(float DeltaTime)
@@ -111,11 +131,46 @@ void AVRPawn::Tick(float DeltaTime)
 void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+	ensure(EnhancedInputComponent);
+
+	{
+		const UBasicInputDataConfig* BasicInputDataConfig = GetDefault<UBasicInputDataConfig>();
+		EnhancedInputComponent->BindAction(BasicInputDataConfig->Move, ETriggerEvent::Triggered, this, &ThisClass::OnMove);
+	}
+	{
+		const UVRHandsInputDataConfig* VRHandsInputDataConfig = GetDefault<UVRHandsInputDataConfig>();
+		EnhancedInputComponent->BindAction(VRHandsInputDataConfig->IA_Grab_Left, ETriggerEvent::Started, this, &ThisClass::OnGrabLeftStarted);
+		EnhancedInputComponent->BindAction(VRHandsInputDataConfig->IA_Grab_Left, ETriggerEvent::Completed, this, &ThisClass::OnGrabLeftCompleted);
+
+		EnhancedInputComponent->BindAction(VRHandsInputDataConfig->IA_Grab_Right, ETriggerEvent::Started, this, &ThisClass::OnGrabRightStarted);
+		EnhancedInputComponent->BindAction(VRHandsInputDataConfig->IA_Grab_Right, ETriggerEvent::Completed, this, &ThisClass::OnGrabRightCompleted);
+	}
+	{
+		HandGraphLeft->SetupPlayerInputComponent(MotionControllerLeft, EnhancedInputComponent);
+		HandGraphRight->SetupPlayerInputComponent(MotionControllerRight, EnhancedInputComponent);
+	}
 
 }
 
 void AVRPawn::OnMove(const FInputActionValue& InputActionValue)
 {
+	const FVector2D ActionValue = InputActionValue.Get<FVector2D>();
+
+	const FRotator CameraRotator = VRCamera->GetRelativeRotation();
+	const FRotator CameraYawRotator = FRotator(0., CameraRotator.Yaw, 0.);
+
+	if (!FMath::IsNearlyZero(ActionValue.Y))
+	{
+		const FVector ForwardVector = UKismetMathLibrary::GetForwardVector(CameraYawRotator);
+		AddMovementInput(ForwardVector, ActionValue.Y);
+	}
+
+	if (!FMath::IsNearlyZero(ActionValue.X))
+	{
+		const FVector RightVector = UKismetMathLibrary::GetRightVector(CameraYawRotator);
+		AddMovementInput(RightVector, ActionValue.X);
+	}
 }
 
 void AVRPawn::OnGrabStarted(UMotionControllerComponent* MotionControllerComponent, const bool bLeft, const FInputActionValue& InputActionValue)
