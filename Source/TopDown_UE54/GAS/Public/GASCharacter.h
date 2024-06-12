@@ -13,7 +13,10 @@ UCLASS()
 class TOPDOWN_UE54_API AGASCharacter : public AGASCharacterBase
 {
 	GENERATED_BODY()
-private:
+public:
 	AGASCharacter();
-
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
+private:
+	void InitAbilityActorInfo();
 };

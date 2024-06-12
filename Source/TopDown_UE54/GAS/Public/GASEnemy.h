@@ -17,9 +17,15 @@ class TOPDOWN_UE54_API AGASEnemy : public AGASCharacterBase, public IGASEnemyInt
 
 public:
 	AGASEnemy();
+
+	//~ Begin Enemy Interface
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
-	
-	UPROPERTY(BlueprintReadOnly)
-	bool bHighlighted = false;
+	//~ End Enemy Interface
+
+protected:
+	virtual void BeginPlay() override;
+
+	//UPROPERTY(BlueprintReadOnly)
+	//bool bHighlighted = false;
 };

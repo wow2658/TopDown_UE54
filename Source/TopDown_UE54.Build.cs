@@ -10,10 +10,10 @@ public class TopDown_UE54 : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { 
             "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput",
-            "AIModule", "Niagara", "XRBase", "UMG"
+            "AIModule", "Niagara", "XRBase", "HeadMountedDisplay", "UMG",  "GameplayAbilities"
         });
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "GameplayAbilities", "GameplayTags", "GameplayTasks" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "GameplayTags", "GameplayTasks" });
 
         PrivateIncludePaths.Add("TopDown_UE54");
         PrivateIncludePaths.Add("TopDown_UE54/GAS");

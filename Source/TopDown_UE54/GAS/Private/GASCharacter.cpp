@@ -2,7 +2,11 @@
 
 
 #include "GASCharacter.h"
+
+#include "AbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GASPlayerState.h"
+//#include "GASAttributeSet.h"
 
 AGASCharacter::AGASCharacter()
 {
@@ -14,4 +18,30 @@ AGASCharacter::AGASCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
+}
+
+void AGASCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	InitAbilityActorInfo();
+
+}
+
+void AGASCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	InitAbilityActorInfo();
+
+}
+
+void AGASCharacter::InitAbilityActorInfo()
+{
+	AGASPlayerState* GASPS = GetPlayerState<AGASPlayerState>();
+	check(GASPS);
+	GASPS->GetAbilitySystemComponent()->InitAbilityActorInfo(GASPS, this);
+	ASC = GASPS->GetAbilitySystemComponent();
+	AttributeSet = GASPS->GetAttributeSet();
+	//const UGASAttributeSet* CurrentAttributeSet = ASC->GetSet<UGASAttributeSet>();
 }

@@ -11,6 +11,11 @@ AGASCharacterBase::AGASCharacterBase()
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0,0.0, -GetCapsuleComponent()->GetScaledCapsuleHalfHeight()),FRotator(0.0,270.0,0.0) );
 }
 
+UAbilitySystemComponent* AGASCharacterBase::GetAbilitySystemComponent() const
+{
+	return ASC;
+}
+
 void AGASCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
