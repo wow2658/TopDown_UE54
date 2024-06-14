@@ -122,6 +122,7 @@ UVRHandsInputDataConfig::UVRHandsInputDataConfig()
 
 void UHandGraph::SetupPlayerInputComponent(UMotionControllerComponent* InMotionControllerComponent, UEnhancedInputComponent* InputComponent)
 {
+
 }
 
 void UHandGraph::OnGrabTriggered(const FInputActionValue& InputActionValue)

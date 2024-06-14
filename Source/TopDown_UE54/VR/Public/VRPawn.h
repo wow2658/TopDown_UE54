@@ -15,6 +15,7 @@ class UWidgetInteractionComponent;
 class UWidgetComponent;
 class UVRHandSkeletalMeshComponent;
 class UHandGraph;
+class UFloatingPawnMovement;
 
 static inline const FName LeftGrip = TEXT("LeftGrip");
 static inline const FName LeftAim = TEXT("LeftAim");
@@ -89,4 +90,8 @@ protected:
 	TObjectPtr<UHandGraph> HandGraphLeft;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UHandGraph> HandGraphRight;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UPawnMovementComponent> MovementComponent;
+
 };

@@ -10,6 +10,7 @@
 #include "HandGraph.h"
 #include "VRHandSkeletalMeshComponent.h"
 #include "Components/WidgetComponent.h"
+#include "GameFramework/FloatingPawnMovement.h"
 
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
@@ -74,7 +75,7 @@ AVRPawn::AVRPawn()
 		LeftHandWidget->SetRelativeTransform(Transform);
 		LeftHandWidget->SetDrawSize(FVector2D(800.0, 800.0));
 	}
-
+	
 	RightHand = CreateDefaultSubobject<UVRHandSkeletalMeshComponent>(TEXT("RightHand"));
 	RightHand->SetupAttachment(MotionControllerRight);
 
@@ -95,6 +96,10 @@ AVRPawn::AVRPawn()
 		LeftHand->bMirror = true;
 		//LeftHand->SetAnimClass(AnimClass.Class);
 	}
+
+	MovementComponent = CreateDefaultSubobject<UPawnMovementComponent, UFloatingPawnMovement>(TEXT("MovementComponent"));
+	MovementComponent->UpdatedComponent = CapsuleComponent;
+
 }
 
 void AVRPawn::PreInitializeComponents()
@@ -116,8 +121,8 @@ void AVRPawn::BeginPlay()
 		const UVRHandsInputDataConfig* VRHandsInputDataConfig = GetDefault<UVRHandsInputDataConfig>();
 		Subsystem->AddMappingContext(VRHandsInputDataConfig->InputMappingContext, 0);
 
-		const UVRHandsAnimationInputDataConfig* VRHandsAnimationInputDataConfig = GetDefault<UVRHandsAnimationInputDataConfig>();
-		Subsystem->AddMappingContext(VRHandsAnimationInputDataConfig->InputMappingContext, 1);
+		//const UVRHandsAnimationInputDataConfig* VRHandsAnimationInputDataConfig = GetDefault<UVRHandsAnimationInputDataConfig>();
+		//Subsystem->AddMappingContext(VRHandsAnimationInputDataConfig->InputMappingContext, 1);
 	}
 
 }
@@ -160,16 +165,29 @@ void AVRPawn::OnMove(const FInputActionValue& InputActionValue)
 	const FRotator CameraRotator = VRCamera->GetRelativeRotation();
 	const FRotator CameraYawRotator = FRotator(0., CameraRotator.Yaw, 0.);
 
+	const float DeltaTime = GetWorld()->GetDeltaSeconds();
+	const float Speed = 10000.f;
+
 	if (!FMath::IsNearlyZero(ActionValue.Y))
 	{
 		const FVector ForwardVector = UKismetMathLibrary::GetForwardVector(CameraYawRotator);
-		AddMovementInput(ForwardVector, ActionValue.Y);
+		AddMovementInput(ForwardVector, ActionValue.Y * Speed * DeltaTime);
+
+		/*FVector CurrentLocation = GetActorLocation();
+		FVector NewLocation = CurrentLocation + (ForwardVector * Speed * ActionValue.Y * DeltaTime);
+
+		SetActorLocation(NewLocation);*/
 	}
 
 	if (!FMath::IsNearlyZero(ActionValue.X))
 	{
 		const FVector RightVector = UKismetMathLibrary::GetRightVector(CameraYawRotator);
-		AddMovementInput(RightVector, ActionValue.X);
+		AddMovementInput(RightVector, ActionValue.X * Speed * DeltaTime);
+
+		/*FVector CurrentLocation = GetActorLocation();
+		FVector NewLocation = CurrentLocation + (RightVector * Speed * ActionValue.X * DeltaTime);
+
+		SetActorLocation(NewLocation);*/
 	}
 }
 
